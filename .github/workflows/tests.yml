@@ -22,3 +22,4 @@ jobs:
       - run: python experiments/end_to_end_planner.py
       - run: python experiments/ecd_adversarial_comparison.py
       - run: python experiments/ml_deployment_case.py
+      - run: python experiments/sequential_ml_deployment.py
