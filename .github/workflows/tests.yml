@@ -16,6 +16,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements.txt
       - run: python -m pytest -q
+      - run: python experiments/continuous_coverage_validation.py
       - run: python experiments/cheapest_experiment.py
       - run: python experiments/derived_worlds.py
       - run: python experiments/end_to_end_planner.py
