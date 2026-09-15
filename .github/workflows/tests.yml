@@ -23,3 +23,4 @@ jobs:
       - run: python experiments/ecd_adversarial_comparison.py
       - run: python experiments/ml_deployment_case.py
       - run: python experiments/sequential_ml_deployment.py
+      - run: python experiments/exact_dp_comparison.py
