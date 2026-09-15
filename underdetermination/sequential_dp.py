@@ -8,7 +8,7 @@ An experiment returns PASS or FAIL. The global target is DEPLOY iff every
 component is PASS; any FAIL immediately resolves DO_NOT_DEPLOY.
 
 For a state S of unresolved components,
-    V(S) = min_i [ c_i + max(V(S\{i}), 0) ] = min_i [c_i + V(S\{i})].
+    V(S) = min_i [ c_i + max(V(S minus {i}), 0) ] = min_i [c_i + V(S minus {i})].
 The explicit recursion is retained because it is the baseline form needed for
 later extensions with non-binary outcomes and experiment-dependent successor
 states.
