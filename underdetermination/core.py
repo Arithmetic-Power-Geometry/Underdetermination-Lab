@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import comb
+from math import exp, lgamma, log
 from typing import Iterable, List, Optional, Tuple
 
 
@@ -22,15 +22,27 @@ class ExperimentResult:
     tv_distance: float
 
 
+def _log_binom_coeff(n: int, k: int) -> float:
+    return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1)
+
+
 def binom_pmf(k: int, n: int, p: float) -> float:
-    return comb(n, k) * (p ** k) * ((1.0 - p) ** (n - k))
+    if p <= 0.0:
+        return 1.0 if k == 0 else 0.0
+    if p >= 1.0:
+        return 1.0 if k == n else 0.0
+    return exp(
+        _log_binom_coeff(n, k)
+        + k * log(p)
+        + (n - k) * log(1.0 - p)
+    )
 
 
 def two_sided_exact_pvalue(s: int, n: int, theta: float) -> float:
-    """Simple exact two-sided binomial p-value by probability ordering."""
+    """Exact two-sided binomial p-value by probability ordering."""
     observed = binom_pmf(s, n, theta)
     probs = [binom_pmf(k, n, theta) for k in range(n + 1)]
-    return min(1.0, sum(p for p in probs if p <= observed + 1e-15))
+    return min(1.0, sum(prob for prob in probs if prob <= observed + 1e-15))
 
 
 def compatible_worlds(
@@ -53,7 +65,6 @@ def incompatible_pair(
     above = [w for w in worlds if w.theta >= decision_threshold]
     if not below or not above:
         return None
-    # The hardest boundary-straddling pair: closest worlds on opposite sides.
     return max(below, key=lambda w: w.theta), min(above, key=lambda w: w.theta)
 
 
