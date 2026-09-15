@@ -137,15 +137,16 @@ def main():
         )
 
     if not candidates:
-        print("OBSTRUCTION: no candidate evaluation certifies finite-grid resolution within budget.")
+        print("OBSTRUCTION: no candidate evaluation resolves a finite-grid subgroup boundary within budget.")
         return
 
     best = min(candidates)
-    print("\nCHEAPEST FINITE-GRID CERTIFYING EXPERIMENT:")
+    print("\nCHEAPEST NEXT FINITE-GRID SUBGROUP-RESOLUTION EXPERIMENT:")
     print(
         f"evaluate {best[2]} additional labelled examples from subgroup '{best[1]}' "
         f"at total cost {best[0]:.2f}"
     )
+    print("This is a next-step subgroup experiment, not by itself a global deployment certificate under the conjunction rule.")
     print("Continuous zero-margin uniform resolution remains an obstruction; a declared margin is required for a finite continuous guarantee.")
 
 
