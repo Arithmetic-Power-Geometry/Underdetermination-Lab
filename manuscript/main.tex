@@ -6,6 +6,7 @@
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{booktabs,tabularx,longtable,array,multirow}
 \usepackage{graphicx}
+\usepackage{float}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
 \usepackage{algorithm}
@@ -111,7 +112,7 @@ For the executable Bernoulli benchmark, $K=(k,n)$ with $k$ successes in $n$ tria
 \end{equation}
 and admit $W$ when $p_W(k,n)\ge\alpha$. This produces an exact-test inversion set rather than a normal approximation. Exact binomial procedures are conservative in finite samples \parencite{clopper1934,blyth1983,brown2001}; here conservatism is acceptable because the admission set is intended to guard against premature elimination of possible worlds.
 
-\begin{algorithm}[t]
+\begin{algorithm}[H]
 \caption{Evidence-first admission and resolution interface}
 \label{alg:interface}
 \begin{algorithmic}[1]
@@ -158,15 +159,15 @@ If admissible worlds are restricted to $p\le d-\gamma$ or $p\ge d+\gamma$ for fi
 The theorem is not presented as a new fact about Bernoulli families; its role is operational. It turns zero-margin non-separation into a typed output of the evidence-to-planning interface instead of allowing a finite-grid artifact to masquerade as a continuous guarantee.
 
 \section{Software and Reproducible Experimental Program}
-The concept was developed first as the question: \emph{find the cheapest experiment for which current knowledge leaves mutually incompatible possible worlds}. We then implemented the idea as an executable research artifact, repeatedly attacked it with prior art, narrowed the claim, and added validation gates before writing this manuscript. The repository contains the statistical admission code, obstruction certificates, one-step planner, exact target-aware dynamic program, controlled ML case, tests, and GitHub Actions workflow.
+The proposed framework was formulated mathematically and then implemented as a reproducible software artifact. The repository contains the statistical admission layer, obstruction logic, one-step and sequential planning components, the exact target-aware dynamic-programming baseline, the controlled ML deployment case, automated tests, and the GitHub Actions workflow used to regenerate the reported numerical results.
 
-The workflow has been used as a falsification device rather than presentation infrastructure. When the exact dynamic-programming baseline matched the sequential wrapper, we removed planner novelty from the paper rather than hiding the result.
+The implementation serves as an executable validation of the mathematical formulation. In particular, the exact dynamic-programming baseline reproduces the same finite planning optimum as the sequential wrapper on the matched benchmark, so the planning layer is treated as an existing downstream component rather than as a claimed methodological novelty.
 
 \section{Results}
 \subsection{Coverage gate}
 Coverage was evaluated deterministically at 999 Bernoulli parameter values from 0.001 to 0.999 for sample sizes 10, 20, 50, 100, and 200. This validation is independent of the coarser 0.01 planning grid used in later finite examples. \Cref{tab:coverage} reports the executed results.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Exact-test inversion admission coverage. Nominal coverage is 0.95.}
 \label{tab:coverage}
@@ -186,9 +187,9 @@ $n$ & Min. coverage & $p$ at min. & Coverage at 0.799 & Coverage at 0.801\\
 The minimum observed coverage was 0.950009652 at $p=0.175$, $n=200$. This is a deterministic dense scan for the stated sample sizes, not an analytic proof for all real $p$ and all $n$.
 
 \subsection{Evidence-induced incompatible worlds}
-With $K=17/20$ and $\alpha=0.05$, the 0.01 grid admits 33 worlds from 0.63 through 0.95. A downstream threshold $d=0.80$ therefore remains unresolved. The endpoints 0.63 and 0.95 form an easy contradiction-exposure pair, whereas 0.79 and 0.80 are the closest finite-grid cross-decision pair.
+With $K=17/20$ and $\alpha=0.05$, the 0.01 grid admits 33 worlds from 0.63 through 0.95. A downstream threshold $d=0.80$ therefore remains unresolved. The endpoints 0.63 and 0.95 form an easy contradiction-exposure pair, whereas 0.79 and 0.80 are the closest finite-grid cross-decision pair; \Cref{fig:admissible} visualizes the resulting admissible interval and boundary location.
 
-\begin{figure}[t]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[x=10cm,y=1cm]
 \draw[->] (0.58,0) -- (0.99,0) node[right] {$\theta$};
@@ -207,7 +208,7 @@ With $K=17/20$ and $\alpha=0.05$, the 0.01 grid admits 33 worlds from 0.63 throu
 \subsection{Exposure cost versus boundary cost}
 At total-variation threshold $\tau=0.80$, the endpoint pair 0.63 versus 0.95 requires only eight additional Bernoulli observations, yielding $\TV=0.801346$. In contrast, the closest finite-grid pair 0.79 versus 0.80 requires 10,705 observations; at 10,704 observations TV is 0.7999646853, and at 10,705 it is 0.8000060936. The finite-grid boundary cost is therefore 1,338.125 times the contradiction-exposure cost. \Cref{tab:costs} summarizes the distinction.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Distinct resolution notions under $\tau=0.80$.}
 \label{tab:costs}
@@ -241,7 +242,7 @@ V(S,A)=
 \end{equation}
 with obstruction if no remaining experiment separates the target classes.
 
-\begin{algorithm}[t]
+\begin{algorithm}[H]
 \caption{Exact finite target-aware dynamic-programming baseline}
 \label{alg:dp}
 \begin{algorithmic}[1]
@@ -262,12 +263,12 @@ with obstruction if no remaining experiment separates the target classes.
 \end{algorithmic}
 \end{algorithm}
 
-The exact baseline returns the same worst-case cost 112,402.5 and the same first experiment. This result is important precisely because it removes a tempting but incorrect novelty claim. Once the finite world table is supplied, our planning wrapper is subsumed on this benchmark by exact target-aware planning.
+As summarized by \Cref{alg:dp}, the exact baseline returns the same worst-case cost 112,402.5 and the same first experiment. This result is important precisely because it removes a tempting but incorrect novelty claim. Once the finite world table is supplied, our planning wrapper is subsumed on this benchmark by exact target-aware planning.
 
 \subsection{Controlled ML deployment case}
 Consider a fixed classifier evaluated on three deployment subgroups, with a deployment rule requiring every subgroup accuracy to be at least 0.80. The observed evidence and admitted finite-grid worlds are shown in \Cref{tab:deployment}.
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Controlled ML deployment case.}
 \label{tab:deployment}
@@ -282,22 +283,27 @@ Rare & 17/20 & 0.63--0.95 & UNRESOLVED & 8.0\\
 \end{tabular}
 \end{table}
 
-For the hardest finite-grid pair 0.79 versus 0.80, 10,705 additional labels imply costs of 26,762.5 for the moderate subgroup and 85,640.0 for the rare subgroup. The cheapest \emph{next} subgroup-resolution experiment is therefore the moderate group. It is not, by itself, a global deployment certificate: if moderate passes, rare remains unresolved. Correct conjunction semantics require the sequential policy shown in \Cref{fig:pipeline}.
+For the hardest finite-grid pair 0.79 versus 0.80, 10,705 additional labels imply costs of 26,762.5 for the moderate subgroup and 85,640.0 for the rare subgroup. The cheapest \emph{next} subgroup-resolution experiment is therefore the moderate group. It is not, by itself, a global deployment certificate: if moderate passes, rare remains unresolved. Correct conjunction semantics require the sequential policy. The full evidence-to-decision interface is summarized in \Cref{fig:pipeline}.
 
-\begin{figure}[t]
+\begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=0.84,transform shape,
-box/.style={draw,rounded corners,align=center,minimum width=2.7cm,minimum height=0.9cm},
-arr/.style={-{Latex[length=2.5mm]},thick},node distance=0.9cm and 0.75cm]
-\node[box] (e) {Finite noisy evidence\\$K$};
-\node[box,right=of e] (c) {Admission\\$\CalC_\alpha(K)$};
-\node[box,right=of c] (d) {Decision map\\$d(W)$};
-\node[box,below=of d] (p) {Target-aware planner\\existing / interchangeable};
-\node[box,left=of p] (x) {Experiment\\least-cost feasible};
-\node[box,right=of p] (o) {Typed obstruction\\family / margin / budget};
-\draw[arr] (e)--(c);\draw[arr] (c)--(d);\draw[arr] (d)--node[right]{disagreement}(p);
-\draw[arr] (p)--node[above]{feasible}(x);\draw[arr] (p)--node[above]{infeasible}(o);
-\draw[arr,bend left=35] (d) to node[above]{agreement / stop}(e);
+\begin{tikzpicture}[
+  node distance=7mm and 8mm,
+  box/.style={draw,rounded corners,align=center,minimum height=8mm,inner sep=3pt,font=\small},
+  arr/.style={-{Stealth[length=2mm]},thick}
+]
+\node[box] (K) {Finite noisy evidence\\$K$};
+\node[box,right=of K] (C) {Admission\\$\CalC_\alpha(K)$};
+\node[box,right=of C] (D) {Decision map\\$d(W)$};
+\node[box,below=of D] (P) {Target-aware planner\\existing / interchangeable};
+\node[box,left=of P] (E) {Experiment\\least-cost feasible};
+\node[box,right=of P] (O) {Typed obstruction\\family / margin / budget};
+\draw[arr] (K) -- (C);
+\draw[arr] (C) -- (D);
+\draw[arr] (D) -- node[right,font=\scriptsize] {disagreement} (P);
+\draw[arr] (P) -- node[above,font=\scriptsize] {feasible} (E);
+\draw[arr] (P) -- node[above,font=\scriptsize] {infeasible} (O);
+\draw[arr] (D.west) to[bend left=35] node[below,font=\scriptsize] {agreement / stop} (K.south);
 \end{tikzpicture}
 \caption{Evidence-first interface. The claimed contribution is the statistically auditable transition from finite noisy evidence to admissible worlds and explicit resolution/obstruction semantics; the target-aware planner is not claimed as new.}
 \label{fig:pipeline}
@@ -314,15 +320,13 @@ The exact DP comparison also changes how the contribution should be understood. 
 The Bernoulli examples are intentionally controlled. The coverage study is a dense deterministic scan over 999 parameter values for selected sample sizes rather than a symbolic proof for all $p$ and $n$. The 0.01 planning grid is a computational discretization and is never used to justify the continuous obstruction theorem. The ML deployment example is controlled rather than drawn from a proprietary production system, allowing the data-generating and cost assumptions to remain auditable. The exact DP benchmark is small by design and demonstrates subsumption, not scalability. Finally, the contribution boundary is close to decision-region determination, robust Bayesian design, decision-focused sequential design, and obstruction-aware finite identification \parencite{javdani2014,go2022,wan2026,brown2026}; future work should test whether richer statistical admission structures yield theoretical reductions, impossibility results, or computational advantages beyond the interface role established here.
 
 \section{Conclusion}
-We developed the concept before the manuscript, implemented it as software, used executable tests to attack its claims, and allowed negative results to narrow the contribution. The final result is not a new universal experimental-design algorithm. It is an evidence-first protocol: construct coverage-controlled admissible worlds from finite noisy data; ask whether those worlds agree on the downstream decision; if not, pass them to a cost-aware target-identification planner; and return either a least-cost feasible experiment or a typed statistical obstruction. In the controlled Bernoulli and ML cases, this separation prevents easy contradictions from being confused with hard decision boundaries and prevents a finite-grid cost from being misrepresented as a continuous guarantee. The exact baseline further shows that scientific value can come from identifying the right interface and stopping rule even when the downstream optimizer is already known.
+This study introduces an evidence-first protocol rather than a new universal experimental-design algorithm. The procedure constructs coverage-controlled admissible worlds from finite noisy data, determines whether those worlds agree on the downstream decision, passes unresolved cases to a cost-aware target-identification planner, and returns either a least-cost feasible experiment or a typed statistical obstruction. In the controlled Bernoulli and ML cases, this separation prevents easy contradictions from being confused with hard decision boundaries and prevents a finite-grid cost from being misrepresented as a continuous guarantee. The exact baseline further shows that scientific value can come from identifying the right interface and stopping rule even when the downstream optimizer is already known.
 
 \section*{Data and Code Availability}
 All code, tests, controlled data-generating specifications, experiment scripts, validation artifacts, and reproducibility workflows used in this study are available at \url{https://github.com/Arithmetic-Power-Geometry/Underdetermination-Lab}. The repository includes the statistical admission implementation, obstruction certificates, one-step and sequential planners, the exact target-aware dynamic-programming baseline, ML deployment experiment, and GitHub Actions validation workflow. The controlled numerical results reported in this manuscript are generated from repository scripts and do not depend on private data.
 
 \section*{Reproducibility Statement}
 The manuscript is designed to compile with XeLaTeX and Biber. The software test suite and experiment scripts are executed in continuous integration. Numerical values reported in the main tables were frozen from successful workflow executions rather than copied from unexecuted analysis notebooks. The current manuscript intentionally reports the exact dynamic-programming match as a negative novelty result.
-
-\nocite{berger1985,bernardo1979,foster2019,foster2020,kleinegesse2020,ivanova2021,tong2001,balcan2006,hanneke2014,kaufmann2016,lehmann2005,casella2002,wasserman2004,vanDerVaart1998,sterne1954,clopper1934,blaker2000,agresti1998,brown2001,blyth1983,posch2013,hadad2021,robertson2025a,robertson2025b,fisher1935,box2005,atkinson2007,pukelsheim1993,fedorov1972,blackwell1951,blackwell1953,chernoff1959,lindley1956,chaloner1995,ryan2016,overstall2022,settles2009,seung1992,mackay1992,cohn1996,dasgupta2005,dasgupta2007,hsu2010,nowak2011,golovin2010,golovin2011,javdani2014,go2022,donti2017,wilder2019,elmachtoub2022,bertsimas2020,wan2026,healy2026,saha2026,brown2026,garivier2016,shahriari2016,snoek2012,frazier2018,krause2008,krause2005,cover2006,kullback1951,lecam1986,torgersen1991,wald1947,deGroot1970,robbins1952,lai1988,auer2002,bubeck2012,lattimore2020,russo2018,kapoor2024,gebru2021,mitchell2019,pineau2021,sculley2015,reinsel2023}
 
 \printbibliography
 \end{document}
