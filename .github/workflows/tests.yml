@@ -24,3 +24,8 @@ jobs:
       - run: python experiments/ml_deployment_case.py
       - run: python experiments/sequential_ml_deployment.py
       - run: python experiments/exact_dp_comparison.py
+      - name: Install LaTeX toolchain
+        run: sudo apt-get update && sudo apt-get install -y texlive-xetex texlive-latex-extra texlive-science texlive-bibtex-extra biber
+      - name: Compile manuscript with XeLaTeX and Biber
+        working-directory: manuscript
+        run: bash compile.sh
